@@ -1,0 +1,6 @@
+#NAMESPACE#
+
+public partial class #GroupName# : AuthoringSceneSystemGroup
+{
+    protected override string AuthoringSceneName => "YourSceneName";
+}       
