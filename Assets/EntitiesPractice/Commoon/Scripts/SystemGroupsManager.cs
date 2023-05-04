@@ -29,7 +29,8 @@ namespace DOTS.DOD
                     var subscene = Object.FindObjectOfType<SubScene>();
                     //Debug.Log("subscene == null : " + (subscene == null));
                     if (subscene != null) 
-                    { 
+                    {
+                        //Enabled属性是在父类ComponentSystemGroup中定义的
                         Enabled = RequiredSceneName == subscene.gameObject.scene.name;
                         Debug.Log("subSceneName : " + subscene.gameObject.scene.name);
                     }
