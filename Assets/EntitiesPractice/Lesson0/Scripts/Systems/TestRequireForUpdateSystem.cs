@@ -23,7 +23,7 @@ namespace DOTS.DOD.LESSON0
         [BurstCompile]
         //[RequireMatchingQueriesForUpdate]
         public void OnUpdate(ref SystemState state) {
-            Debug.Log("In TestSystem-OnUpdate");
+            //Debug.Log("In TestSystem-OnUpdate");
         }
         [BurstCompile]
         public void OnDestroy(ref SystemState state) { }

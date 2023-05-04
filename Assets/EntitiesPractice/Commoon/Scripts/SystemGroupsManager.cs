@@ -23,14 +23,15 @@ namespace DOTS.DOD
         {
             if (!initialized)
             {
+                Debug.Log("RequiredSceneName : " + RequiredSceneName);
                 if (SceneManager.GetActiveScene().isLoaded)
                 {
                     var subscene = Object.FindObjectOfType<SubScene>();
-                    Debug.Log("subscene == null : " + subscene == null );
+                    //Debug.Log("subscene == null : " + (subscene == null));
                     if (subscene != null) 
                     { 
                         Enabled = RequiredSceneName == subscene.gameObject.scene.name;
-                        Debug.Log("RequiredSceneName : " + RequiredSceneName);
+                        Debug.Log("subSceneName : " + subscene.gameObject.scene.name);
                     }
                     else { Enabled = false; }
                     initialized = true;

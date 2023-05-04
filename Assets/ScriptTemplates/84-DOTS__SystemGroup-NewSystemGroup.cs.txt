@@ -1,6 +1,6 @@
 #NAMESPACE#
 
-public partial class #GroupName# : AuthoringSceneSystemGroup
+public partial class #GroupName# : MatchSceneSystemGroup
 {
-    protected override string AuthoringSceneName => "YourSceneName";
+    protected override string RequiredSceneName => "YourSceneName";
 }       
