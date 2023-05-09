@@ -12,7 +12,7 @@ namespace DOTS.DOD.LESSON2
                                                           //报错Inconsistent accessibility XXX is less accessible than XXX，即内部数据被公开暴露
     {
         [ReadOnly] public float elapsedTime; 
-        void Execute(ref LocalTransform transform, RotateSpeed rotateSpeed) //是否需要ref和in？要！
+        void Execute(ref LocalTransform transform, in RotateSpeed rotateSpeed) //是否需要ref和in？要！
         {
             transform = transform.RotateY(rotateSpeed.rotateSpeed * elapsedTime);
         }
@@ -33,8 +33,8 @@ namespace DOTS.DOD.LESSON2
         public void OnUpdate(ref SystemState state)
         {
             var job = new CubeRotateJobEntity{elapsedTime = SystemAPI.Time.DeltaTime};//state.Time.DeltaTime已过时
-            job.ScheduleParallel();
-            // state.Dependency = job.ScheduleParallel(state.Dependency);
+            // job.ScheduleParallel();
+            state.Dependency = job.ScheduleParallel(state.Dependency);
             //job不需要dispose？
         }
 
