@@ -11,7 +11,7 @@ namespace DOTS.DOD
     public abstract partial class MatchSceneSystemGroup : ComponentSystemGroup //因为继承自SystemBase所以是托管类，用class表示
     {
 
-        protected abstract string RequiredSceneName { get; } //抽象只读属性，子类必须实现该属性并且初始化，后续只读不可更改
+        protected abstract string RequiredSceneName { get; } //抽象只读属性（没有set就是只读），子类必须实现该属性并且初始化，后续只读不可更改
         private bool initialized;
 
         protected override void OnCreate()
@@ -23,7 +23,7 @@ namespace DOTS.DOD
         {
             if (!initialized)
             {
-                Debug.Log("RequiredSceneName : " + RequiredSceneName);
+                // Debug.Log("this system group require scene name : " + RequiredSceneName);
                 if (SceneManager.GetActiveScene().isLoaded)
                 {
                     var subscene = Object.FindObjectOfType<SubScene>();
@@ -32,7 +32,7 @@ namespace DOTS.DOD
                     {
                         //Enabled属性是在父类ComponentSystemGroup中定义的
                         Enabled = RequiredSceneName == subscene.gameObject.scene.name;
-                        Debug.Log("subSceneName : " + subscene.gameObject.scene.name);
+                        // Debug.Log("subSceneName : " + subscene.gameObject.scene.name);
                     }
                     else { Enabled = false; }
                     initialized = true;

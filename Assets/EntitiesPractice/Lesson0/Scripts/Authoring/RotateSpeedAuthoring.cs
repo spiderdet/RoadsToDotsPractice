@@ -5,9 +5,10 @@ using UnityEngine;
 using Unity.Mathematics;
 
 
-namespace DOTS.DOD.LESSON0 
+namespace DOTS.DOD
 {
-    struct RotateSpeed : IComponentData
+    //默认internal，加上public为了防止在别的lesson中访问该组件时报异常公开的错误
+    public struct RotateSpeed : IComponentData 
     {
         public float rotateSpeed;
         //可以封装不止一个数据，
