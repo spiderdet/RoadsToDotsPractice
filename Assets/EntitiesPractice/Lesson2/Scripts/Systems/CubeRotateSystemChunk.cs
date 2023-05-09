@@ -7,7 +7,7 @@ using Unity.Burst.Intrinsics;//v128属于该命名空间
 
 namespace DOTS.DOD.LESSON2
 {
-    public partial struct CubeRotateJobChunk : IJobChunk
+    public struct CubeRotateJobChunk : IJobChunk//不用partial因为dots不会再生成代码来补全，不像IJobEntity
     {
         [ReadOnly] public float elapsedTime;
         //IJobChunk需要额外传递句柄，就是IJobEntity中自动检索的component
