@@ -26,3 +26,13 @@
 **待改进点：**
 1. 初始的绿蓝各2个共4个cube能否完全由代码生成
 2. RotateSpeed和ColorTag最好在两个authoring文件中，分别bake，这样不会破坏开闭原则。*能否在一个物体上挂两个authoring？如果可以第二次bake的时候如何获取该entity？*
+
+### lesson2: 
+**实现内容：** 5个cube以不同的速度旋转。在工作线程中并行处理旋转逻辑，使用IJobEntity和IJobChunk。
+**实现方式：**
+IJobEntity：
+
+IJobChunk:
+1. 
+
+**待改进点：**
