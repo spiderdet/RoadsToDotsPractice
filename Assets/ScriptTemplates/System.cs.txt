@@ -11,13 +11,19 @@ namespace MyNamespace
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {    
-
+            state.RequireForUpdate<CubeSpawner>();
+            var builder = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<GoInGameRequest>()
+                .WithAll<ReceiveRpcCommandRequest>();
+            state.RequireForUpdate(state.GetEntityQuery(builder));
+            TFromEntity = state.GetComponentLookup<T>(true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {    
-
+            var commandBuffer = new EntityCommandBuffer(Allocator.Temp);
+            TFromEntity.Update(ref state);
         }
 
         [BurstCompile]

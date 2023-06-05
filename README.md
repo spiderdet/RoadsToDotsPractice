@@ -22,17 +22,23 @@
 **实现内容：** 绿蓝各2个共4个cube一起旋转。体现对蓝和绿分别处理、对所有同色物体一起处理。
 **实现方式：**
 实现1：在独立component文件中定义RotateSpeed、GreeTag、BlueTag这三个component；写两个authoring文件分别bake上GreenTag+RotateSpeed和BlueTag+RotateSpeed，给蓝绿cube挂载上不同的authoring；在一个文件中写两个system（因为system不用挂载），里面用`foreach`+`SystemAPIQuery<RefRW<LocalTransform>, RefRO<RotateSpeed>>().WithAll<Green/BlueTag>()` 实现旋转逻辑。
-
 **待改进点：**
 1. 初始的绿蓝各2个共4个cube能否完全由代码生成
 2. RotateSpeed和ColorTag最好在两个authoring文件中，分别bake，这样不会破坏开闭原则。*能否在一个物体上挂两个authoring？如果可以第二次bake的时候如何获取该entity？*
 
 ### lesson2: 
-**实现内容：** 5个cube以不同的速度旋转。在工作线程中并行处理旋转逻辑，使用IJobEntity和IJobChunk。
+**实现内容：** 5个cube以不同的速度旋转。在工作线程中并行处理旋转逻辑，分别使用IJobEntity和IJobChunk来实现在工作线程中并行处理旋转逻辑。
 **实现方式：**
-IJobEntity：
+**IJobEntity**：1.实现一个public partial struct且继承自IJobEntity的job，定义要用的变量(如deltaTime)，用public修饰，等待job实例化的时候传入，然后实现（不叫重写！）Execute方法，其参数就是要筛选检索的组件类型，用ref，in，out等修饰好（如果仅做筛选不做读写也得放在参数里！不像`SystemAPI.Query<RefRW<>,RefRO<>>().WithAll<>()`）。
+2.然后在system的OnUpdate中new一个job对象，new的时候把job里public的参数都赋好值。
+3.再`state.Dependency = job.ScheduleParallel(state.Dependency)`就可以了，在原本的依赖关系中插入该job。
 
-IJobChunk:
-1. 
-
+**IJobChunk**：1.实现一个public partial struct且继承自IJobChunk的job，定义要用的变量+要检索的组件类型的类柄(typehandle)，用public修饰，等待job实例化的时候传入，实现Execute方法，注意参数是固定的。然后用`chunk.GetNativeArray(ref xxTypeHandle)`的方式获取chunk内的component数组，接着使用迭代器ChunkEntityEnumerator或自己用for循环实现对每个entity的操作。
+2.在system内部设private的变量（system内不要定义public变量），用于OnCreate和OnUpdate的变量传递：EntityQuery和要检索的组件的类柄。
+- 为什么要类柄：因为实例化job的时候需要传递类柄参数。
+- 为什么要EntityQuery：因为job.ScheduleParallel的时候需要作为第一个参数（IJobChunk本质上根据EntityQuery检索chunk，检索到后再用IJobChunk来逐chunk操作其中的组件，因此既要EntityQuery，又要类柄）。
+  
+3.在system的OnCreate中通过`new EntityQueryBuilder(Allocator.Temp).WithAll<RotateSpeed, LocalTransform>()`的方式获取QueryBuilder，再`state.GetEntityQuery(queryBuilder)`得到EntityQuery。另外通过`state.GetComponentTypeHandle<xxx>()`来获取类柄。
+4.在system的OnUpdate中，*首先要让类柄更新`TypeHandle.Update(ref state)`，防止structral change，（也可以不在OnCreate中保存变量，而是在OnUpdate中每帧获取，但这样开销更大，因为`TypeHandle.Update(ref state)`是增量更新）*。然后实例化job，把job要的参数和类柄传过去。然后通过`state.Dependency = job.ScheduleParallel(EntityQuery, state.Dependency)`开启job，注意要传入EntityQuery，还要更新Dependency。
 **待改进点：**
+1. 
