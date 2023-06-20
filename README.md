@@ -22,14 +22,15 @@
 
 二.另外还实现了MatchSceneSystemGroup的抽象类（继承自ComponentSystemGroup（它继承自SystemBase），其中有Enabled属性），使得继承它的systemGroup以及在这些systemGroup下update的system都能根据sceneName来Enable或Disable。注意继承它的只是systemGroup，system只需要加上`[UpdateInGroup(typeof(xx))]`且继承Isystem或SystemBase，不继承MatchSceneSystemGroup！
 ### lesson1: 
-**实现内容：** 绿蓝各2个共4个cube一起旋转。体现对蓝和绿分别处理、对所有同色物体一起处理。
+**实现内容：** 绿蓝各2个共4个cube一起旋转。体现对蓝和绿**分别处理**（即不同颜色的物体有不同的处理逻辑，因此没有用一个IJobEntity+withAny\<green/blueTag\>来处理）、对所有同色物体一起处理。
 
 **实现方式：**
 实现1：在独立component文件中定义RotateSpeed、GreeTag、BlueTag这三个component；写两个authoring文件分别bake上GreenTag+RotateSpeed和BlueTag+RotateSpeed，给蓝绿cube挂载上不同的authoring；在一个文件中写两个system（因为system不用挂载），里面用`foreach`+`SystemAPIQuery<RefRW<LocalTransform>, RefRO<RotateSpeed>>().WithAll<Green/BlueTag>()` 实现旋转逻辑。
 
 **待改进点：**
 1. 初始的绿蓝各2个共4个cube能否完全由代码生成
-2. RotateSpeed和ColorTag最好在两个authoring文件中，分别bake，这样不会破坏开闭原则。*能否在一个物体上挂两个authoring？如果可以第二次bake的时候如何获取该entity？*
+2. RotateSpeed和ColorTag最好在两个authoring文件中，分别bake，这样不会破坏开闭原则。*能否在一个物体上挂两个authoring？如果可以第二次bake的时候如何获取该entity？
+**解答**：一个gameobject上可以挂多个monobehavior，因此也可以挂多个authoring
 
 ### lesson2: 
 **实现内容：** 5个cube以不同的速度旋转。在工作线程中并行处理旋转逻辑，分别使用IJobEntity和IJobChunk来实现在工作线程中并行处理旋转逻辑。
