@@ -30,12 +30,12 @@ namespace DOTS.DOD
                     //Debug.Log("subscene == null : " + (subscene == null));
                     if (subscene != null) 
                     {
-                        //Enabled属性是在父类ComponentSystemGroup中定义的
+                        //Enabled属性是在父类ComponentSystemGroup中定义的，代表本systen的enable状态
                         Enabled = RequiredSceneName == subscene.gameObject.scene.name;
                         // Debug.Log("subSceneName : " + subscene.gameObject.scene.name);
                     }
-                    else { Enabled = false; }
-                    initialized = true;
+                    else { Enabled = false; }//如果没有subscene直接disable，因为这说明没有entity？为啥不考虑还有convertToEntity的gameobject
+                    initialized = true;//在isload的if里设置true，保证一直等待到scene loaded再进行检测
                 }
             }
             base.OnUpdate();
