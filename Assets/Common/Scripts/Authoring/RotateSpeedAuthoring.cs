@@ -1,0 +1,31 @@
+﻿
+using Unity.Entities;
+using UnityEngine;
+using Unity.Mathematics;
+
+
+namespace DOTS.DOD
+{
+    //默认internal，加上public为了防止在别的lesson中访问该组件时报异常公开的错误
+    public struct RotateSpeed : IComponentData 
+    {
+        public float rotateSpeed;
+        //可以封装不止一个数据，
+    }
+    public class RotateSpeedAuthoring : MonoBehaviour
+    {
+        [Range(0, 360)] public float rotateSpeed = 200;
+
+        public class Baker : Baker<RotateSpeedAuthoring>//必须和class名字相同，相当于针对这个class的baker
+        {
+            public override void Bake(RotateSpeedAuthoring authoring) //参数还要传一次 
+            {
+                var entity = GetEntity(TransformUsageFlags.Dynamic); //GetEntity在抽象类IBaker中定义,得到的是本体entity,即
+                //Primary entity，通过GetEntity获取（不是新建！），并且给其加上flag，不能动的用Renderable
+                var component = new RotateSpeed { rotateSpeed = math.radians(authoring.rotateSpeed) };
+                AddComponent<RotateSpeed>(entity,component);//也在抽象类IBaker中定义，
+                //也可以添加多个Component
+            }
+        }
+    }
+}
